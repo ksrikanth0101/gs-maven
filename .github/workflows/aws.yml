@@ -1,23 +1,10 @@
-# 1. The name of your workflow visible in the GitHub UI
-name: My First Pipeline
+# .github/workflows/hello-world.yml
+name: hello-world             # Optional: The name shown in the GitHub Actions tab
+on: [push]                    # The event that triggers the workflow
 
-# 2. The TRIGGER: What event starts this workflow?
-on:
-  push:
-    branches: [ "main" ] # Runs every time you push code to main
-
-# 3. The WORK: What should this pipeline do?
 jobs:
-  run-checks:
-    # The operating system of the GitHub cloud virtual machine
-    runs-on: ubuntu-latest
-
-    # The sequential list of tasks to execute
+  my-job:                     # ID for the job
+    runs-on: ubuntu-latest    # The type of machine to run on
     steps:
-      # Step A: Download your repository code onto the virtual machine
-      - name: Check out repository code
-        uses: actions/checkout@v4
-
-      # Step B: Run a basic terminal command
-      - name: Say Hello
-        run: echo "The pipeline is working perfectly!"
+      - name: my-step         # Optional: Name for this specific step
+        run: echo "Hello World!"

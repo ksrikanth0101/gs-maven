@@ -1,69 +1,23 @@
-name: Build and Push Docker Image
+# 1. The name of your workflow visible in the GitHub UI
+name: My First Pipeline
 
+# 2. The TRIGGER: What event starts this workflow?
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ "main" ] # Runs every time you push code to main
 
-env:
-  REGISTRY: ghcr.io
-  # Converts repository name to lowercase to prevent Docker tagging errors
-  IMAGE_NAME: ${{ github.repository }}
-
+# 3. The WORK: What should this pipeline do?
 jobs:
-  build-and-push:
+  run-checks:
+    # The operating system of the GitHub cloud virtual machine
     runs-on: ubuntu-latest
-    
-    # Permissions required to push images to GitHub Packages
-    permissions:
-      contents: read
-      packages: write
 
+    # The sequential list of tasks to execute
     steps:
-      # Step 1: Check out the repository code
-      - name: Checkout repository
+      # Step A: Download your repository code onto the virtual machine
+      - name: Check out repository code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Java JDK environment
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'maven' # Caches Maven dependencies automatically
-
-      # Step 3: Build the application artifact
-      - name: Build Java application with Maven
-        run: mvn clean package -DskipTests
-
-      # Step 4: Log in to the target Docker registry
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 5: Extract metadata (tags, labels) for Docker
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=sha,format=short
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-
-      # Step 6: Build and push the Docker image
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ id.meta.outputs.tags }}
-          labels: ${{ id.meta.outputs.labels }}
+      # Step B: Run a basic terminal command
+      - name: Say Hello
+        run: echo "The pipeline is working perfectly!"
